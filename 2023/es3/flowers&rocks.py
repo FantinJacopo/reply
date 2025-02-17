@@ -46,6 +46,16 @@ coords = []
 case_id = 0
 connect = []
 
+def bruteforce(used, pos, cnt):
+    if cnt >= F:
+        return True
+    elif G - pos < F - cnt:
+        return False
+    elif (used >> pos) & 1:
+        return bruteforce(used, pos + 1, cnt)
+    else:
+        return bruteforce(used | connect[pos], pos + 1, cnt + 1) or bruteforce(used, pos + 1, cnt)
+
 def check(d):
     for i in range(G):
         connect[i] = 0
@@ -53,7 +63,9 @@ def check(d):
     for i in range(G):
         for j in range(G):
             if abs(coords[i][0] - coords[j][0]) + abs(coords[i][1] - coords[j][1]) <= d:
-
+                connect[i] |= (1 << j)    # se dovesse dare errore è perchè in c++ va scritto 1LL per long long
+    res = bruteforce(0, 0, 0)
+    return res
 def solve_primi():
     with open(INPUT_FILE, 'r') as file:
         W, H, F, G = map(int, file.readline().split())
